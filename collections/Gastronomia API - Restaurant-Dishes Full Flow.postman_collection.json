@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "f8338f53-cd68-440c-aecc-c36454884ed0",
+		"name": "Gastronomia API - Restaurant-Dishes Full Flow",
+		"description": "Setup data, run association tests, then teardown",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30509121"
+	},
+	"item": [
+		{
+			"name": "Setup: Create Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"created restaurant\", () => pm.response.to.have.status(201));",
+							"let r = pm.response.json();",
+							"pm.environment.set('restaurantId', r.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Setup Resto\",\n  \"address\": \"42 Setup St\",\n  \"cuisineType\": \"mexican\",\n  \"website\": \"http://setup-resto.com\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Setup: Create Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"created dish\", () => pm.response.to.have.status(201));",
+							"let d = pm.response.json();",
+							"pm.environment.set('dishId', d.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Setup Dish\",\n  \"description\": \"Test description\",\n  \"price\": 5.25,\n  \"category\": \"beverage\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Associate Dish to Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"associate 201\", () => pm.response.to.have.status(201));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Associate Non-Existent Dish to Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status 404\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Dishes for Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 and array\", () => {",
+							"  pm.response.to.have.status(200);",
+							"  pm.expect(pm.response.json()).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dish from Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 and correct id\", () => {",
+							"  pm.response.to.have.status(200);",
+							"  pm.expect(pm.response.json().id).to.eql(pm.environment.get('dishId'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Dishes for Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"update200 and includes dish\", () => {",
+							"  pm.response.to.have.status(200);",
+							"  pm.expect(pm.response.json()).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\"{{dishId}}\"]"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update with Non-Existent Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 or 404 for bad update\", () => pm.expect([400,404]).to.include(pm.response.code));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\"00000000-0000-0000-0000-000000000000\"]"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Dish from Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"delete200\", () => pm.expect([200,204]).to.include(pm.response.code));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Unassociated Dish from Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404 when deleting unassociated dish\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}/dishes/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}",
+						"dishes",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Teardown: Delete Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"teardown dish 204 or 200\", () => pm.expect([200,204]).to.include(pm.response.code));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Teardown: Delete Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"teardown resto 204 or 200\", () => pm.expect([200,204]).to.include(pm.response.code));",
+							"pm.environment.unset('restaurantId');",
+							"pm.environment.unset('dishId');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
