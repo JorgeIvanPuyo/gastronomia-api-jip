@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "425ee729-689f-487d-b87f-c2ccf0a1c9ab",
+		"name": "Gastronomia API - Restaurants",
+		"description": "Tests for /restaurants endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30509121"
+	},
+	"item": [
+		{
+			"name": "Create Valid Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", ()=> pm.response.to.have.status(201));",
+							"const json = pm.response.json();",
+							"pm.expect(json).to.have.property('id');",
+							"pm.environment.set('restaurantId', json.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"testaurant\",\n  \"address\": \"123 Main St\",\n  \"cuisineType\": \"italian\",\n  \"website\": \"http://testaurant2.com\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Invalid Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", ()=> pm.response.to.have.status(400));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"\",\n  \"address\": \"\",\n  \"cuisineType\": \"unknown\",\n  \"website\": \"not-a-url\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Restaurants",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", ()=> pm.response.to.have.status(200));",
+							"pm.test(\"Response is array\", ()=> pm.expect(pm.response.json()).to.be.an('array'));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Restaurant by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", ()=> pm.response.to.have.status(200));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Non-Existent Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404\", ()=> pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", ()=> pm.response.to.have.status(200));",
+							"pm.test(\"Website updated\", ()=> pm.expect(pm.response.json().website).to.eql('http://updated.com'));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"website\": \"http://updated.com\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Non-Existent Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404\", ()=> pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"website\": \"http://updated.com\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/restaurants/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 204\", ()=> pm.expect([200,204]).to.include(pm.response.code));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/{{restaurantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"{{restaurantId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Non-Existent Restaurant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404\", ()=> pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/restaurants/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"restaurants",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

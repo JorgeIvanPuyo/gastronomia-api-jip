@@ -1,0 +1,315 @@
+{
+	"info": {
+		"_postman_id": "dcee89ef-ab40-4626-8838-0b59521f9f9a",
+		"name": "Gastronomia API - Dishes",
+		"description": "Tests for /dishes endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30509121"
+	},
+	"item": [
+		{
+			"name": "Create Valid Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+							"const json = pm.response.json();",
+							"pm.expect(json).to.have.property('id');",
+							"pm.environment.set('dishId', json.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Bruschetta\",\n  \"description\": \"Grilled bread with tomato and basil\",\n  \"price\": 8.50,\n  \"category\": \"appetizer\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Invalid Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", () => pm.response.to.have.status(400));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"\",\n  \"description\": \"\",\n  \"price\": -5,\n  \"category\": \"invalid\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Dishes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+							"pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dishes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dish by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Non-Existent Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dishes/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+							"pm.test(\"Price updated\", () => {",
+							"  const json = pm.response.json();",
+							"  pm.expect(parseFloat(json.price)).to.eql(9.00);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"price\": 9.00\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Non-Existent Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"price\": 9.00\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/dishes/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 204\", () => pm.expect([200,204]).to.include(pm.response.code));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dishes/{{dishId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"{{dishId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Non-Existent Dish",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 404\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/dishes/00000000-0000-0000-0000-000000000000",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dishes",
+						"00000000-0000-0000-0000-000000000000"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
