@@ -76,4 +76,22 @@ curl http://localhost:3000/
 # Expected output: "Hello World!"
 ```
 
+### 7. Run Tests and Generate Coverage Report
+
+To run the unit tests:
+
+```bash
+npm run test
+```
+
+To generate a test coverage report:
+
+```bash
+npm run test:cov
+```
+
+This will run Jest with coverage enabled and output a report in the coverage/ directory.  
+
+To view the HTML coverage report, open: `coverage/lcov-report/index.html` in your browser.
+
 ---
